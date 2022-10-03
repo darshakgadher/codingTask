@@ -36,6 +36,10 @@ const updateUser = async (req, resp) => {
         const updatingUser = await getUserByIdService(updatingId);
         if (updatingUser) {
           if (updatingUser?.userType === admin) {
+            const existUser = await getUserByEmailService(body?.email);
+            if (existUser) {
+              return resp.status(401).send("Email Alreday Exist");
+            }
             const valid = schema.validate({
               name: body?.name,
               phone: body?.phone,
