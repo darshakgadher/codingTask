@@ -31,58 +31,56 @@ const updateUser = async (req, resp) => {
   console.log("Calling updateUser with body:", body);
   if (id) {
     const userData = await getUserByIdService(id);
+    const updatingUser = await getUserByIdService(updatingId);
     if (userData) {
-      if (body?.email || body?.phone) {
-        const updatingUser = await getUserByIdService(updatingId);
-        if (updatingUser) {
-          if (updatingUser?.userType === admin) {
-            const existUser = await getUserByEmailService(body?.email);
-            if (existUser) {
-              return resp.status(401).send("Email Alreday Exist");
-            }
-            const valid = schema.validate({
-              name: body?.name,
-              phone: body?.phone,
-              email: body?.email,
-              dob: body?.dob,
-              address: body?.address,
-              gender: body?.gender,
-            });
-            if (valid?.error) {
-              return resp.status(401).send("Please enter valid details");
-            }
-            const payload = {
-              email: body?.email,
-              dob: body?.dob,
-              name: body?.name,
-              address: body?.address,
-              gender: body?.gender,
-              phone_number: body?.phone,
-            };
-            await updateUserDetailsByIdService(payload, id);
-            return resp.status(200).send("Updated Successfully");
+      if(updatingUser?.userType === admin) {
+        if(body?.email){
+          const existUser = await getUserByEmailService(body?.email);
+          if (existUser) {
+            return resp.status(401).send("Email Alreday Exist");
           }
-          return resp
-            .status(402)
-            .send("You don't have access to perform this action");
         }
-        return resp.status(401).send("User Not Found");
+        const valid = schema.validate({
+          name: body?.name,
+          phone: body?.phone,
+          email: body?.email,
+          dob: body?.dob,
+          address: body?.address,
+          gender: body?.gender,
+        });
+        if (valid?.error) {
+          return resp.status(401).send("Please enter valid details");
+        }
+        const payload = {
+          email: body?.email,
+          dob: body?.dob,
+          name: body?.name,
+          address: body?.address,
+          gender: body?.gender,
+          phone_number: body?.phone,
+        };
+        await updateUserDetailsByIdService(payload, id);
+        return resp.status(200).send("Updated Successfully");
+
       } else {
+        if(body?.email || body?.phone){
+          return resp.status(401).send("You don't have access to perform this action");
+        }
         if (id === updatingId) {
           const valid = schema.validate({
-            name: body?.updatedName,
-            dob: body?.updatedDob,
-            address: body?.updatedAddress,
-            gender: body?.updatedGender,
+            name: body?.name,
+            dob: body?.dob,
+            address: body?.address,
+            gender: body?.gender,
           });
           if (valid?.error) {
             return resp.status(401).send("Please enter valid details");
           }
           const payload = {
-            dob: body?.updatedDob,
-            name: body?.updatedName,
-            address: body?.updatedAddress,
-            gender: body?.updatedGender,
+            dob: body?.dob,
+            name: body?.name,
+            address: body?.address,
+            gender: body?.gender,
           };
           await updateUserDetailsByIdService(payload, id);
           return resp.status(200).send("Updated Successfully");
