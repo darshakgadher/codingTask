@@ -1,8 +1,11 @@
 const { Router } = require("express");
-const updateUser = require("../controllers/user");
+const { updateUser, getToken } = require("../controllers/user");
+const { verifyAuthToken } = require("../middleware/verifyToken");
+
 const user = () => {
   const router = Router();
-  router.put("/:id", updateUser);
+  router.post("/token", getToken);
+  router.put("/user/:id", verifyAuthToken, updateUser);
   return router;
 };
 

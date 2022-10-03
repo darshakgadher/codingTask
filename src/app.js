@@ -6,11 +6,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const healthCheckupPoint = route.healthCheckupPoint();
 const user = route.user();
-const basePath = "/test";
+const basePath = "/api";
 
-app.use(healthCheckupPoint);
 app.use(basePath, user);
 
 module.exports = app;

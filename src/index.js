@@ -1,4 +1,5 @@
 const app = require("./app");
+require("dotenv").config();
 
 const startServer = async (app) => {
   const port = process.env.PORT || 7000;
